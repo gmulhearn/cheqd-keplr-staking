@@ -1,5 +1,5 @@
 import { SigningStargateClient } from '@cosmjs/stargate';
-import { config } from './config';
+import { mainnetConfig, testnetConfig } from './config';
 
 export const constructTx = (addr, validatorAddr, amount) => {
     return { // updatedTx
@@ -27,8 +27,9 @@ export const constructTx = (addr, validatorAddr, amount) => {
     }
 }
 
-export const signTxAndBroadcast = (tx, address, cb) => {
+export const signTxAndBroadcast = (tx, address, network, cb) => {
     (async () => {
+        const config = network === "Testnet" ? testnetConfig : mainnetConfig
         await window.keplr && window.keplr.enable(config.CHAIN_ID);
         const offlineSigner = window.getOfflineSignerOnlyAmino && window.getOfflineSignerOnlyAmino(config.CHAIN_ID);
         const client = await SigningStargateClient.connectWithSigner(

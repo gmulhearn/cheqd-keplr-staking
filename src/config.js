@@ -1,6 +1,6 @@
-export const config = {
-    RPC_URL: 'https://rpc.testnet.cheqd.network',
-    REST_URL: 'https://api.testnet.cheqd.network',
+export const testnetConfig = {
+    RPC_URL: 'http://localhost:3000/https://rpc.testnet.cheqd.network',
+    REST_URL: 'http://localhost:3000/https://api.testnet.cheqd.network',
     EXPLORER_URL: 'https://testnet-explorer.cheqd.io/',
     STAKING_URL: 'https://cheqd.omniflix.co/stake',
     NETWORK_NAME: 'cheqd',
