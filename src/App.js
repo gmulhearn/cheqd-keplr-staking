@@ -56,8 +56,18 @@ function App() {
     signTxAndBroadcast(tx, delegatorAddr, network, () => {});
   };
 
-  const connectClick = async() => {
+  const connectClick = async () => {
     await suggestNetwork(network);
+    const CHAIN_ID = network == "Testnet" ? testnetConfig.CHAIN_ID : mainnetConfig.CHAIN_ID
+    await window.keplr.enable(CHAIN_ID);
+
+    const offlineSigner = window.keplr.getOfflineSigner(CHAIN_ID);
+    const accounts = await offlineSigner.getAccounts();
+
+    if (accounts[0]) {
+      console.log(accounts);
+      setDelegatorAddr(accounts[0].address);
+    }
   };
 
   return (
