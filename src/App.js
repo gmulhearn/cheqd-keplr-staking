@@ -14,6 +14,7 @@ import Button from "@mui/material/Button";
 import { useEffect, useState } from "react";
 import { constructTx, signTxAndBroadcast, suggestNetwork } from "./StakeHelper";
 import { mainnetConfig, testnetConfig } from "./config";
+import axios from "axios";
 
 const useStyles = makeStyles((theme) => ({
   root: {},
@@ -32,7 +33,9 @@ function App() {
   const [stakeAmount, setStakeAmount] = useState("");
   const [delegatorAddr, setDelegatorAddr] = useState("");
   const [validatorAddr, setValidatorAddr] = useState("");
-  const [network, setNetwork] = useState("Testnet");
+  const [network, setNetwork] = useState("Mainnet");
+
+  const [validators, setValidators] = useState([]); // {address: cheqdvaloper..., moniker: name}
 
   useEffect(async () => {
     window.onload = async () => {
@@ -51,6 +54,23 @@ function App() {
     };
   }, []);
 
+  useEffect(() => {
+    const API_URL =
+      network == "Testnet" ? testnetConfig.REST_URL : mainnetConfig.REST_URL;
+
+    axios.get(API_URL + "/staking/validators").then((res) => {
+      console.log(res.data.result);
+      let _validators = [];
+      res.data.result.forEach((_validator) => {
+        _validators.push({
+          address: _validator.operator_address,
+          moniker: _validator.description.moniker,
+        });
+      });
+      setValidators(_validators);
+    });
+  }, [network]);
+
   const stakeClick = () => {
     const tx = constructTx(delegatorAddr, validatorAddr, stakeAmount, network);
     signTxAndBroadcast(tx, delegatorAddr, network, () => {});
@@ -58,7 +78,8 @@ function App() {
 
   const connectClick = async () => {
     await suggestNetwork(network);
-    const CHAIN_ID = network == "Testnet" ? testnetConfig.CHAIN_ID : mainnetConfig.CHAIN_ID
+    const CHAIN_ID =
+      network == "Testnet" ? testnetConfig.CHAIN_ID : mainnetConfig.CHAIN_ID;
     await window.keplr.enable(CHAIN_ID);
 
     const offlineSigner = window.keplr.getOfflineSigner(CHAIN_ID);
@@ -92,7 +113,6 @@ function App() {
                 </Select>
                 <Button
                   variant="contained"
-                  color="secondary"
                   fullWidth
                   style={{ marginLeft: "1em", marginBlock: "0.5em" }}
                   onClick={connectClick}
@@ -116,12 +136,12 @@ function App() {
               ></TextField>
               <TextField
                 fullWidth
+                value={validatorAddr}
                 placeholder="Validator address (cheqdvaloper1d...)"
                 onChange={(e) => setValidatorAddr(e.target.value)}
               ></TextField>
               <Button
                 variant="contained"
-                color="secondary"
                 fullWidth
                 style={{ marginTop: "2em" }}
                 onClick={stakeClick}
@@ -129,6 +149,35 @@ function App() {
                 Stake
               </Button>
             </Box>
+          </Paper>
+        </Grid>
+        <Grid item xs={12} md={8}>
+          <Paper elevation={3} className={classes.paper}>
+            <Typography variant="h4" textAlign={"center"}>
+              {network} Validators
+            </Typography>
+            {validators.map((validator) => (
+              <Paper
+                elevation={6}
+                style={{ marginTop: "0.5em", padding: "1em" }}
+                key={validator.address}
+              >
+                <Box display="flex" flexDirection="row" alignItems="center">
+                  <Button
+                    style={{ marginRight: "2em" }}
+                    onClick={() => {
+                      setValidatorAddr(validator.address);
+                    }}
+                  >
+                    Select
+                  </Button>
+                  <Typography variant="h5">{validator.moniker}</Typography>
+                  <Typography style={{ margin: "1em" }}>
+                    {validator.address}
+                  </Typography>
+                </Box>
+              </Paper>
+            ))}
           </Paper>
         </Grid>
       </Grid>
