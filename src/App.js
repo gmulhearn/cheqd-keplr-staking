@@ -68,6 +68,8 @@ function App() {
         });
       });
       setValidators(_validators);
+    }).catch((e) => {
+      setValidators([{address: e.toString(), moniker: "ERROR"}])
     });
   }, [network]);
 
