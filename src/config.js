@@ -5,7 +5,7 @@ export const testnetConfig = {
     STAKING_URL: 'https://cheqd.omniflix.co/stake',
     NETWORK_NAME: 'cheqd',
     NETWORK_TYPE: 'testnet',
-    CHAIN_ID: 'cheqd-testnet-3',
+    CHAIN_ID: 'cheqd-testnet-4',
     CHAIN_NAME: 'Cheqd Testnet',
     COIN_DENOM: 'CHEQ',
     COIN_MINIMAL_DENOM: 'ncheq',
@@ -44,7 +44,7 @@ export const mainnetConfig = {
 
 
 export const testnetChainConfig = {
-    "chainId": "cheqd-testnet-3",
+    "chainId": "cheqd-testnet-4",
     "chainName": "Cheqd Testnet",
     "rpc": "https://rpc.testnet.cheqd.network",
     "rest": "https://api.testnet.cheqd.network",
